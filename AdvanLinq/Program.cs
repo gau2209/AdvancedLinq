@@ -212,6 +212,34 @@
                     Manager = d.Manager
                 }
                 ).GroupBy(x=> new {x.Location,x.Department }).Where(x=>x.Sum(slr => slr.Salary) >= 70000).ToList();
+
+            var GroupDataQuery = from e in Employees
+                                 join d in Departments
+                                 on e.Department equals d.DepartmentName
+                                 into DataGrouped
+                                 from dg in DataGrouped.DefaultIfEmpty()
+                                 group new
+                                 {
+                                     ID = e.ID,
+                                     FullName = e.Name,
+                                     Location = e.Location,
+                                     Department = e.Department,
+                                     Salary = e.Salary,
+                                     Manager = dg?.Manager ?? "No Manager"
+                                 } by new { e.Location, e.Department }
+                                 into grouped
+                                 where grouped.Sum(slr=>slr.Salary) >= 70000
+                                 select grouped;
+
+            foreach (var item in GroupDataQuery)
+            {
+                Console.WriteLine($"Location: {item.Key.Location} - Department: {item.Key.Department} - Total salary: {item.Sum(slr => slr.Salary)}");
+                foreach (var emp in item)
+                {
+                    Console.WriteLine($" - ID: {emp.ID}, Name: {emp.FullName}, Salary: {emp.Salary}, Manager: {emp.Manager}");
+                }
+            }
+            Console.WriteLine("==============================");
             foreach (var item in groupData)
                 {
                 Console.WriteLine($"Location: {item.Key.Location} - Department: {item.Key.Department} - Total salary: {item.Sum(slr => slr.Salary)}");
