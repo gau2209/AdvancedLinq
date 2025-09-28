@@ -4,6 +4,7 @@
     {
         public class Employee
         {
+            public int ID { get; set; }
             public string Location { get; set; }
             public string Name { get; set; }
             public string Department { get; set; } // HR , IT, Sales
@@ -117,38 +118,110 @@
             #endregion
 
             #region GroupBy với 2 khoá
-            
-            
-          var employees = new[]
-            {
-                new Employee { Name = "Alice", Location = "New York", Department = "HR", Salary = 60000 },
-                new Employee { Name = "Bob", Location = "New York", Department = "IT", Salary = 80000 },
-                new Employee { Name = "Charlie", Location = "Los Angeles", Department = "HR", Salary = 65000 },
-                new Employee { Name = "David", Location = "Los Angeles", Department = "IT", Salary = 90000 },
-                new Employee { Name = "Eve", Location = "New York", Department = "Sales", Salary = 70000 },
-                new Employee { Name = "Frank", Location = "Los Angeles", Department = "Sales", Salary = 72000 },
-                new Employee { Name = "Tuấn", Location = "New York", Department = "IT", Salary = 72000 }
-            };
+
+
+            //var employees = new[]
+            //  {
+            //      new Employee { Name = "Alice", Location = "New York", Department = "HR", Salary = 60000 },
+            //      new Employee { Name = "Bob", Location = "New York", Department = "IT", Salary = 80000 },
+            //      new Employee { Name = "Charlie", Location = "Los Angeles", Department = "HR", Salary = 65000 },
+            //      new Employee { Name = "David", Location = "Los Angeles", Department = "IT", Salary = 90000 },
+            //      new Employee { Name = "Eve", Location = "New York", Department = "Sales", Salary = 70000 },
+            //      new Employee { Name = "Frank", Location = "Los Angeles", Department = "Sales", Salary = 72000 },
+            //      new Employee { Name = "Tuấn", Location = "New York", Department = "IT", Salary = 72000 }
+            //  };
+
+
+            //  var groupBy_Department_And_Location = employees.GroupBy(e => new { e.Department, e.Location })
+            //      .Select(g => new
+            //      {
+            //          Department = g.Key.Department,
+            //          Location = g.Key.Location,
+            //          TotalSalary = g.Sum(e => e.Salary),
+            //          Employees = g.ToList()
+            //      });
+
+            //  foreach (var item in groupBy_Department_And_Location)
+            //  {
+            //      Console.WriteLine($"Department {item.Department}, location: {item.Location}");
+            //      Console.WriteLine($"Total salary: {item.TotalSalary}");
+            //      foreach (var emp in item.Employees)
+            //      {
+            //          Console.WriteLine($" - {emp.Name}, Salary: {emp.Salary}");
+            //      }
+            //  }
+
+
+            //  // GroupBy với điều kiện Where (Having)
+            //  Console.WriteLine($"============================================");
+            //  var groupBy_Department_And_Location_Having = employees.GroupBy(e => new { e.Department, e.Location })
+            //      .Where(g => g.Sum(e=>e.Salary) >= 70000)
+            //     .Select(g => new
+            //     {
+            //         Department = g.Key.Department,
+            //         Location = g.Key.Location,
+            //         TotalSalary = g.Sum(e => e.Salary),
+            //         Employees = g.ToList()
+            //     });
+
+
+            //  foreach (var item in groupBy_Department_And_Location_Having)
+            //  {
+            //      Console.WriteLine($"Department {item.Department}, location: {item.Location}");
+            //      Console.WriteLine($"Total salary: {item.TotalSalary}");
+            //      foreach (var emp in item.Employees)
+            //      {
+            //          Console.WriteLine($" - {emp.Name}, Salary: {emp.Salary}");
+            //      }
+            //  }
             #endregion
 
-            var groupBy_Department_And_Location = employees.GroupBy(e => new { e.Department, e.Location })
-                .Select(g => new
-                {
-                    Department = g.Key.Department,
-                    Location = g.Key.Location,
-                    TotalSalary = g.Sum(e => e.Salary),
-                    Employees = g.ToList()
-                });
-
-            foreach (var item in groupBy_Department_And_Location)
+            #region Kết hợp Join, GroupBy và Having
+            //Bảng nhân viên
+            var Employees = new[]
             {
-                Console.WriteLine($"Department {item.Department}, location: {item.Location}");
-                Console.WriteLine($"Total salary: {item.TotalSalary}");
-                foreach (var emp in item.Employees)
+                new Employee { ID=1,Name = "Alice", Location = "New York", Department = "HR", Salary = 60000 },
+                new Employee {ID=2, Name = "Bob", Location = "New York", Department = "IT", Salary = 80000 },
+                new Employee {ID=3, Name = "Charlie", Location = "Los Angeles", Department = "HR", Salary = 65000 },
+                new Employee {ID=4, Name = "David", Location = "Los Angeles", Department = "IT", Salary = 90000 },
+                new Employee {ID = 5,  Name = "Eve", Location = "New York", Department = "Sales", Salary = 70000 },
+                new Employee {ID = 6,  Name = "Frank", Location = "Los Angeles", Department = "Sales", Salary = 72000 },
+                new Employee {ID = 7,  Name = "Tuấn", Location = "New York", Department = "IT", Salary = 72000 }
+            };
+
+            //Bảng phòng ban
+            var Departments = new[]
+            {
+                new { DepartmentName = "HR", Manager = "Manager1" },
+                new { DepartmentName = "IT", Manager = "Manager2" },
+                new { DepartmentName = "Sales", Manager = "Manager3" }
+            };
+
+            //Join giữa Employees và Departments, sau đó groupby và lọc bằng điều kiện Having
+            var groupData = Employees.Join(
+                Departments,
+                e => e.Department,
+                d => d.DepartmentName,
+                (e, d) => new
                 {
-                    Console.WriteLine($" - {emp.Name}, Salary: {emp.Salary}");
+                    ID = e.ID,
+                    FullName = e.Name,
+                    Location = e.Location,
+                    Department = e.Department,
+                    Salary = e.Salary,
+                    Manager = d.Manager
+                }
+                ).GroupBy(x=> new {x.Location,x.Department }).Where(x=>x.Sum(slr => slr.Salary) >= 70000).ToList();
+            foreach (var item in groupData)
+                {
+                Console.WriteLine($"Location: {item.Key.Location} - Department: {item.Key.Department} - Total salary: {item.Sum(slr => slr.Salary)}");
+                foreach (var emp in item)
+                {
+                    Console.WriteLine($" - ID: {emp.ID}, Name: {emp.FullName}, Salary: {emp.Salary}, Manager: {emp.Manager}");
                 }
             }
+
+            #endregion
         }
     }
 }
