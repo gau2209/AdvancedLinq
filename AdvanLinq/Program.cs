@@ -177,78 +177,91 @@
             #endregion
 
             #region Kết hợp Join, GroupBy và Having
-            //Bảng nhân viên
-            var Employees = new[]
+            ////Bảng nhân viên
+            //var Employees = new[]
+            //{
+            //    new Employee { ID=1,Name = "Alice", Location = "New York", Department = "HR", Salary = 60000 },
+            //    new Employee {ID=2, Name = "Bob", Location = "New York", Department = "IT", Salary = 80000 },
+            //    new Employee {ID=3, Name = "Charlie", Location = "Los Angeles", Department = "HR", Salary = 65000 },
+            //    new Employee {ID=4, Name = "David", Location = "Los Angeles", Department = "IT", Salary = 90000 },
+            //    new Employee {ID = 5,  Name = "Eve", Location = "New York", Department = "Sales", Salary = 70000 },
+            //    new Employee {ID = 6,  Name = "Frank", Location = "Los Angeles", Department = "Sales", Salary = 72000 },
+            //    new Employee {ID = 7,  Name = "Tuấn", Location = "New York", Department = "IT", Salary = 72000 }
+            //};
+
+            ////Bảng phòng ban
+            //var Departments = new[]
+            //{
+            //    new { DepartmentName = "HR", Manager = "Manager1" },
+            //    new { DepartmentName = "IT", Manager = "Manager2" },
+            //    new { DepartmentName = "Sales", Manager = "Manager3" }
+            //};
+
+            ////Join giữa Employees và Departments, sau đó groupby và lọc bằng điều kiện Having
+            //var groupData = Employees.Join(
+            //    Departments,
+            //    e => e.Department,
+            //    d => d.DepartmentName,
+            //    (e, d) => new
+            //    {
+            //        ID = e.ID,
+            //        FullName = e.Name,
+            //        Location = e.Location,
+            //        Department = e.Department,
+            //        Salary = e.Salary,
+            //        Manager = d.Manager
+            //    }
+            //    ).GroupBy(x=> new {x.Location,x.Department }).Where(x=>x.Sum(slr => slr.Salary) >= 70000).ToList();
+
+            //var GroupDataQuery = from e in Employees
+            //                     join d in Departments
+            //                     on e.Department equals d.DepartmentName
+            //                     into DataGrouped
+            //                     from dg in DataGrouped.DefaultIfEmpty()
+            //                     group new
+            //                     {
+            //                         ID = e.ID,
+            //                         FullName = e.Name,
+            //                         Location = e.Location,
+            //                         Department = e.Department,
+            //                         Salary = e.Salary,
+            //                         Manager = dg?.Manager ?? "No Manager"
+            //                     } by new { e.Location, e.Department }
+            //                     into grouped
+            //                     where grouped.Sum(slr=>slr.Salary) >= 70000
+            //                     select grouped;
+
+            //foreach (var item in GroupDataQuery)
+            //{
+            //    Console.WriteLine($"Location: {item.Key.Location} - Department: {item.Key.Department} - Total salary: {item.Sum(slr => slr.Salary)}");
+            //    foreach (var emp in item)
+            //    {
+            //        Console.WriteLine($" - ID: {emp.ID}, Name: {emp.FullName}, Salary: {emp.Salary}, Manager: {emp.Manager}");
+            //    }
+            //}
+            //Console.WriteLine("==============================");
+            //foreach (var item in groupData)
+            //    {
+            //    Console.WriteLine($"Location: {item.Key.Location} - Department: {item.Key.Department} - Total salary: {item.Sum(slr => slr.Salary)}");
+            //    foreach (var emp in item)
+            //    {
+            //        Console.WriteLine($" - ID: {emp.ID}, Name: {emp.FullName}, Salary: {emp.Salary}, Manager: {emp.Manager}");
+            //    }
+            //}
+
+            #endregion
+
+            #region Lazy Evaluation
+            //Lazy Evaluation (Đánh giá lười biếng) trong LINQ đề cập đến việc trì hoãn việc thực thi một truy vấn cho đến khi kết quả thực sự cần thiết. Điều này có nghĩa là truy vấn không được thực hiện ngay khi nó được định nghĩa, mà chỉ khi bạn bắt đầu lặp qua kết quả hoặc chuyển đổi nó thành một tập hợp cụ thể như mảng hoặc danh sách.
+            var numbers = Enumerable.Range(1, 10);
+            var query = numbers.Where(n => n > 5);
+
+            Console.WriteLine("Truy vấn chưa được thực thi.");
+            numbers = Enumerable.Range(1, 20);
+            foreach (var num in query)
             {
-                new Employee { ID=1,Name = "Alice", Location = "New York", Department = "HR", Salary = 60000 },
-                new Employee {ID=2, Name = "Bob", Location = "New York", Department = "IT", Salary = 80000 },
-                new Employee {ID=3, Name = "Charlie", Location = "Los Angeles", Department = "HR", Salary = 65000 },
-                new Employee {ID=4, Name = "David", Location = "Los Angeles", Department = "IT", Salary = 90000 },
-                new Employee {ID = 5,  Name = "Eve", Location = "New York", Department = "Sales", Salary = 70000 },
-                new Employee {ID = 6,  Name = "Frank", Location = "Los Angeles", Department = "Sales", Salary = 72000 },
-                new Employee {ID = 7,  Name = "Tuấn", Location = "New York", Department = "IT", Salary = 72000 }
-            };
-
-            //Bảng phòng ban
-            var Departments = new[]
-            {
-                new { DepartmentName = "HR", Manager = "Manager1" },
-                new { DepartmentName = "IT", Manager = "Manager2" },
-                new { DepartmentName = "Sales", Manager = "Manager3" }
-            };
-
-            //Join giữa Employees và Departments, sau đó groupby và lọc bằng điều kiện Having
-            var groupData = Employees.Join(
-                Departments,
-                e => e.Department,
-                d => d.DepartmentName,
-                (e, d) => new
-                {
-                    ID = e.ID,
-                    FullName = e.Name,
-                    Location = e.Location,
-                    Department = e.Department,
-                    Salary = e.Salary,
-                    Manager = d.Manager
-                }
-                ).GroupBy(x=> new {x.Location,x.Department }).Where(x=>x.Sum(slr => slr.Salary) >= 70000).ToList();
-
-            var GroupDataQuery = from e in Employees
-                                 join d in Departments
-                                 on e.Department equals d.DepartmentName
-                                 into DataGrouped
-                                 from dg in DataGrouped.DefaultIfEmpty()
-                                 group new
-                                 {
-                                     ID = e.ID,
-                                     FullName = e.Name,
-                                     Location = e.Location,
-                                     Department = e.Department,
-                                     Salary = e.Salary,
-                                     Manager = dg?.Manager ?? "No Manager"
-                                 } by new { e.Location, e.Department }
-                                 into grouped
-                                 where grouped.Sum(slr=>slr.Salary) >= 70000
-                                 select grouped;
-
-            foreach (var item in GroupDataQuery)
-            {
-                Console.WriteLine($"Location: {item.Key.Location} - Department: {item.Key.Department} - Total salary: {item.Sum(slr => slr.Salary)}");
-                foreach (var emp in item)
-                {
-                    Console.WriteLine($" - ID: {emp.ID}, Name: {emp.FullName}, Salary: {emp.Salary}, Manager: {emp.Manager}");
-                }
+                Console.WriteLine(num); // Truy vấn được thực thi ở đây
             }
-            Console.WriteLine("==============================");
-            foreach (var item in groupData)
-                {
-                Console.WriteLine($"Location: {item.Key.Location} - Department: {item.Key.Department} - Total salary: {item.Sum(slr => slr.Salary)}");
-                foreach (var emp in item)
-                {
-                    Console.WriteLine($" - ID: {emp.ID}, Name: {emp.FullName}, Salary: {emp.Salary}, Manager: {emp.Manager}");
-                }
-            }
-
             #endregion
         }
     }
