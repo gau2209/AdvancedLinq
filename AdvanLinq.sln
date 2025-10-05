@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvanLinq", "AdvanLinq\Adva
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflection", "Reflection\Reflection.csproj", "{70707E9F-D8AA-4460-91E2-971AB259B7FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamAndFile", "StreamAndFile\StreamAndFile.csproj", "{9D91574C-1A5C-4207-8566-7D2E31027AEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{70707E9F-D8AA-4460-91E2-971AB259B7FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70707E9F-D8AA-4460-91E2-971AB259B7FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70707E9F-D8AA-4460-91E2-971AB259B7FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D91574C-1A5C-4207-8566-7D2E31027AEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D91574C-1A5C-4207-8566-7D2E31027AEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D91574C-1A5C-4207-8566-7D2E31027AEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D91574C-1A5C-4207-8566-7D2E31027AEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

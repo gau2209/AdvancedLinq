@@ -1,0 +1,3 @@
+username=anhtuanvo2209@gmail.com
+password=AnhTuan2209
+email=anhtuanvo2209@gmail.com
