@@ -1,4 +1,6 @@
-﻿namespace StreamAndFile
+﻿using System.IO.Compression;
+
+namespace StreamAndFile
 {
     internal class Program
     {
@@ -34,9 +36,9 @@
 
             byte[] buffer = new byte[1024];
 
-            using var instream = File.OpenRead(pathFile.Item1);
+             var instream = File.OpenRead(pathFile.Item1);
 
-            using var outStream = File.OpenWrite(Path.Combine(pathFile.Item2,"Account_copy.txt"));
+             var outStream = File.OpenWrite(Path.Combine(pathFile.Item2,"Account_copy.txt"));
             int n = instream.Read(buffer, 0, buffer.Length);
             while (n > 0)
             {
@@ -44,6 +46,9 @@
                 outStream.Write(buffer, 0, n);
                 n = instream.Read(buffer, 0, buffer.Length);
             }
+
+            instream.Close();
+            outStream.Close();
 
             //Đọc tất cả các dòng trong file
             string text = File.ReadAllText(pathFile.Item1);
@@ -92,6 +97,9 @@
                 writer.WriteLine($"{DateTime.Now}: Log entry 1");
             }
 
+            //Nén và giải nén file sử dụng ZipFile
+            ZipFile.CreateFromDirectory(@"D:\c#\AdvanLinq", @"D:\backup.zip");
+            ZipFile.ExtractToDirectory(@"D:\backup.zip", @"D:\restore");
         }
 
         public static (string, string) GetFileDirectory(string Path,string FileName)
