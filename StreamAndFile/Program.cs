@@ -66,6 +66,7 @@
                 }
             }
 
+            //Đọc từng dòng trong file và tách chuỗi sử dụng StreamReader
             using (var reader = new StreamReader(pathFile.Item1))
             {
                 string line;
@@ -80,6 +81,17 @@
                     }    
                 }
             }
+
+            //Ghi log trong file sử dụng StreamWriter
+            string logFilePath = Path.Combine(pathFile.Item2, "logs");
+            if(!Directory.Exists(logFilePath))
+                Directory.CreateDirectory(logFilePath);
+            string logPath = Path.Combine(logFilePath, "Debug.txt");
+            using (var writer = new StreamWriter(logPath, true))
+            {
+                writer.WriteLine($"{DateTime.Now}: Log entry 1");
+            }
+
         }
 
         public static (string, string) GetFileDirectory(string Path,string FileName)
